@@ -1,0 +1,377 @@
+<?php
+/* $Id: couloir_slideshow.module,v 1.7.2.7 2008/08/27 00:32:51 computerwolf Exp $ */
+
+/**
+* Valid permissions for this module
+* @return array An array of valid permissions for the couloir_slideshow module
+*/
+
+function couloir_slideshow_perm() {
+  return array('configure slideshow');
+} // couloir_slideshow_perm()
+
+
+function getHeader($imagearray, $imagepath, $settings=null)
+{
+
+		$header = '' . getJSScript($imagearray, $settings, $imagepath) . '';		
+		return $header;
+}
+
+
+function getImageArray($path, $settings)
+{
+
+$files = array();
+$fileNames = array();
+$i = 0;
+
+    if (is_dir($path ."/")) {
+       		if ($dh = opendir($path."/")) {
+       		
+       		
+           		while (($file = readdir($dh)) !== false) {
+           			$ext = get_ext($file);
+               		if ($file == "." || $file == ".." || $file == ".DS_Store" 
+               			|| is_dir($path ."/".$file) || $ext == "html" || $ext == "htm" || $ext == "php") continue;
+
+               		$fullpath = $path . "/" . $file;
+               		$fkey = strtolower($file);
+               		while (array_key_exists($fkey,$fileNames)) $fkey .= " ";
+               		$a = stat($fullpath);
+               		$files[$fkey]['size'] = $a['size'];
+               		if ($a['size'] == 0) $files[$fkey]['sizetext'] = "-";
+               		else if ($a['size'] > 1024) $files[$fkey]['sizetext'] = (ceil($a['size']/1024*100)/100) . " K";
+               		else if ($a['size'] > 1024*1024) $files[$fkey]['sizetext'] = (ceil($a['size']/(1024*1024)*100)/100) . " Mb";
+               		else $files[$fkey]['sizetext'] = $a['size'] . " bytes";
+               		$files[$fkey]['name'] = $file;
+               		$files[$fkey]['type'] = filetype($fullpath);
+               		$fileNames[$i++] = $fkey;
+           		}
+           		closedir($dh);       		
+       		
+       		
+           }else{}
+    }else{}
+    
+    if ($settings['order']=='random') {
+   			shuffle($fileNames);
+   		} else {
+   			$fileNames = array_sort($fileNames,$settings['order']);
+   		}
+   		
+   		$sortedFiles = array();
+   		$i = 0;
+   		foreach($fileNames as $f) $sortedFiles[$i++] = $files[$f];
+   		return $sortedFiles;
+    
+
+}
+
+
+	function array_sort($array, $type='asc'){
+	   $result=array();
+	   foreach($array as $var => $val){
+		   $set=false;
+		   foreach($result as $var2 => $val2){
+			   if($set==false){
+				   if($val>$val2 && $type=='desc' || $val<$val2 && $type=='asc'){
+					   $temp=array();
+					   foreach($result as $var3 => $val3){
+						   if($var3==$var2) $set=true;
+						   if($set){
+							   $temp[$var3]=$val3;
+							   unset($result[$var3]);
+						   }
+					   }
+					   $result[$var]=$val;   
+					   foreach($temp as $var3 => $val3){
+						   $result[$var3]=$val3;
+					   }
+				   }
+			   }
+		   }
+		   if(!$set){
+			   $result[$var]=$val;
+		   }
+	   }
+	   return $result;
+	}
+
+
+
+
+	function getJSScript ($sortedFiles, $settings, $path) {
+				$script = "
+				var fileLoadingImage = \"" . base_path().drupal_get_path('module', 'couloir_slideshow') . "/img/c.gif\";
+				var fileBottomNavCloseImage = \"" . base_path().drupal_get_path('module', 'couloir_slideshow') . "/img/closelabel.gif\";
+				var photoDir = \"".  base_path() ."".$path . "/\";\n
+				var autoplay = ";
+			
+			if ($settings['autoplay']) {
+				$script .= "true;\n
+				var autoplay_dur = " . $settings['autoplay_dur'] .";\n";
+			} else {
+				$script .= "false;\n";
+			}
+				$script .= "var photoArray = new Array(\n";
+
+	   		if ($settings['wmax'] != "") $wmax = $settings['wmax'];
+	   		if ($settings['hmax'] != "") $hmax = $settings['hmax'];
+
+	   		$i = 0;
+	   		foreach ($sortedFiles as $file) {
+	   			$i++;
+	   			// get image sizes
+	   			list($width, $height, $type, $attr) = getimagesize("$path/$file[name]", $info);
+
+	   			if ($hmax == "") $hmax = $height;
+	   			if ($wmax == "") $wmax = $width;
+
+	   			if ($width>$wmax || $height>$hmax) {
+	   				$dim = scaleImg($width, $height, $wmax, $hmax);
+	   				$width = $dim['width'];
+	   				$height = $dim['height'];
+	   			}
+
+	   			$size = $file[sizetext];
+	   			$iptc = iptcparse($info["APP13"]);
+	   			// iptc  info
+	   			$iptc = iptcparse($info["APP13"]);
+	   			$title = $iptc['2#005'][0];
+	   			$description = $iptc['2#120'][0];
+	   			$description = str_replace("\r", "<br/>", $description);
+	   			$description = addslashes($description);
+	   			$keywords = $iptc['2#025'][0];
+	   			$author = $iptc['2#080'][0];
+	   			$copyright = $iptc['2#116'][0];
+	   			$caption = strip_ext($file[name]);
+
+	   			$script .= "new Array(\"$file[name]\", \"$width\", \"$height\", \"$caption\")";
+	   			if ($i < count($sortedFiles)) $script .= ", \n";
+	   		}
+
+	   		$script .= "\n);\n";
+		return $script;
+	}
+
+
+
+	function scaleImg($width, $height, $wmax, $hmax) {
+		$hscale = $height / $hmax;
+		$wscale = $width / $wmax;
+		if (($hscale > 1) || ($wscale > 1)) {
+			$scale = ($hscale > $wscale)?$hscale:$wscale;
+		} else {
+			$scale = 1;
+		}
+		$dim['width'] = floor($width / $scale);
+		$dim['height'] = floor($height / $scale);
+		return $dim;
+	}
+	
+	
+	function strip_ext($name) {
+		$ext = strrchr($name, '.');
+		if($ext !== false) {
+			$name = substr($name, 0, -strlen($ext));
+		}
+		return $name;
+	}
+	
+	function get_ext($name) {
+		$ext = end(explode('.',$name));
+		return $ext;
+	}
+
+
+/**
+* Generate HTML for the couloir slideshow block
+* @param op the operation from the URL
+* @param delta offset
+* @returns block HTML
+*/
+
+
+function couloir_slideshow_block($op='list', $delta=0, $edit = array()) {
+
+  // listing of blocks, such as on the admin/block page
+$block = array();
+switch ($op){
+case 'list':
+      for ($i=1; $i <= variable_get('couloir_slideshow_number', '1'); $i++) {
+        $blocks[$i]['info'] = t('Couloir Slideshow '.$i);
+      }
+    return $blocks;
+case 'view': default:
+// Set default path
+$imagepath= file_directory_path() . '/' . variable_get('couloir_slideshow_imagepath_'. $delta, 'couloir_slideshow'.$delta);
+  
+$settings['wmax'] = variable_get('couloir_slideshow_wmax_'. $delta, '500');
+$settings['hmax'] = variable_get('couloir_slideshow_hmax_'. $delta, '500');
+$settings['number'] = variable_get('couloir_slideshow_number', '1');
+$settings['order'] = variable_get('couloir_slideshow_order_'. $delta, 'random');
+$settings['autoplay'] = variable_get('couloir_slideshow_autoplay_'. $delta, 1);
+$settings['autoplay_dur'] = variable_get('couloir_slideshow_autoplay_dur_'. $delta, '10000');
+  
+  
+ $imagearray = getImageArray($imagepath, $settings);
+ $slideheader = "<script type=\"text/javascript\">\n";
+ $slideheader .= getHeader($imagearray, $imagepath , $settings) . "\n";
+ $slideheader .= "</script>\n";
+ 
+ $caption = '';
+ if(!variable_get('couloir_slideshow_disable_caption_'.$delta, 0)){
+    $caption = '
+    		<div id="CaptionContainer">
+    		    <p><span>&nbsp;</span> <span id="Counter">&nbsp;</span> <span id="Caption">&nbsp;</span></p>
+    		</div>
+    ';
+ }
+ 
+ 
+  	$url = base_path().drupal_get_path('module', 'couloir_slideshow');
+		$html = '<!-- slideshow ' . $delta . ' -->
+		<div id="OuterContainer">
+			<div id="PhotoContainer">
+				<img id="Photo" src="' . $url . '/img/c.gif" alt="Photo: Couloir" />
+				<div id="LinkContainer">
+				    <a href="#" id="PrevLink" title="Previous Photo"><span>Previous</span></a>
+				    <a href="#" id="ViewPhoto" rel="lightbox" title="View Photo"><span>View Photo</span></a>
+				    <a href="#" id="NextLink" title="Next Photo"><span>Next</span></a>
+			    </div>
+			</div>
+		</div>'
+		
+    .$caption.
+		
+		'<script type="text/javascript">
+ 		// <![CDATA[
+ 		Behaviour.register(myrules);
+ 		// ]]>
+ 		</script>';
+  
+if (count($imagearray) > 0) {  
+
+drupal_set_html_head($slideheader);
+
+  drupal_add_js(drupal_get_path('module', 'couloir_slideshow') .'/js/behaviour.js');
+  drupal_add_js(drupal_get_path('module', 'couloir_slideshow') .'/js/jquery.fxqueues-2.0.2.js');
+  drupal_add_js(drupal_get_path('module', 'couloir_slideshow') .'/js/couloir-slideshow.js');
+  
+  drupal_add_css(drupal_get_path('module', 'couloir_slideshow') .'/css/couloir.css');   
+  
+$block['subject'] = 'Slideshow'; 
+$block['content'] = $html; 
+}
+  return $block;
+
+case 'configure':
+// If $op is "configure", we need to provide the administrator with a
+// configuration form. The $delta parameter tells us which block is being
+// configured.
+$form = array();
+
+    $form['couloir_slideshow_imagepath'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Image Path'),
+    '#default_value' => variable_get('couloir_slideshow_imagepath_'.$delta, 'couloir_slideshow'.$delta),
+    '#size' => 30,
+    '#maxlength' => 100,
+    '#description' => t("Image path relative to the configured File System Path, currently <b>/" . file_directory_path() . "</b>.")
+  );
+
+    $form['couloir_slideshow_wmax'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Max Width'),
+    '#default_value' => variable_get('couloir_slideshow_wmax_'.$delta, '500'),
+    '#size' => 5,
+    '#maxlength' => 5,
+  );  
+  
+    $form['couloir_slideshow_hmax'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Max Height'),
+    '#default_value' => variable_get('couloir_slideshow_hmax_'.$delta, '500'),
+    '#size' => 5,
+    '#maxlength' => 5,
+  );
+  
+    $form['couloir_slideshow_order'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Sort Order'),
+    '#default_value' => variable_get('couloir_slideshow_order_'.$delta, 'random'),
+    '#size' => 30,
+    '#maxlength' => 100,
+    '#description' => t("random, asc, or desc.")
+  );
+  
+    $form['couloir_slideshow_autoplay'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Autoplay'),
+    '#default_value' => variable_get('couloir_slideshow_autoplay_'.$delta, 1),
+    '#description' => t("Autoplay slideshow")
+  );
+  
+    $form['couloir_slideshow_autoplay_dur'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Autoplay Duration'),
+    '#default_value' => variable_get('couloir_slideshow_autoplay_dur_'.$delta, '10000'),
+    '#size' => 20,
+    '#maxlength' => 100,
+    '#description' => t("Default is 10000")
+  );
+
+    $form['couloir_slideshow_disable_caption'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable slide show caption block.'),
+    '#default_value' => variable_get('couloir_slideshow_disable_caption_'.$delta, 0)
+  );
+return $form;
+
+case 'save':
+// If $op is "save", we need to save settings from the configuration form.
+// Have Drupal save the string to the database.
+variable_set('couloir_slideshow_imagepath_'.$delta, $edit['couloir_slideshow_imagepath']);
+variable_set('couloir_slideshow_wmax_'.$delta, $edit['couloir_slideshow_wmax']);
+variable_set('couloir_slideshow_hmax_'.$delta, $edit['couloir_slideshow_hmax']);
+variable_set('couloir_slideshow_order_'.$delta, $edit['couloir_slideshow_order']);
+variable_set('couloir_slideshow_autoplay_'.$delta, $edit['couloir_slideshow_autoplay']);
+variable_set('couloir_slideshow_dur_'.$delta, $edit['couloir_slideshow_dur']);
+variable_set('couloir_slideshow_disable_caption_'.$delta, $edit['couloir_slideshow_disable_caption']);
+return;  
+  }
+ 
+} // end function couloir_slideshow_block
+
+function couloir_slideshow_admin() {
+
+  $form['couloir_slideshow_number'] = array(
+    '#type' => 'select',
+    '#title' => t('Number of Slideshows'),
+    '#description' => t('The total number of Slideshow (blocks) you want.'),
+    '#default_value' => variable_get('couloir_slideshow_number', '1'),
+    '#options' => drupal_map_assoc(array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)),
+  );
+
+  return system_settings_form($form);
+}
+
+
+function couloir_slideshow_menu() {
+
+  $items = array();
+
+  $items['admin/settings/couloir_slideshow'] = array(
+    'title' => t('Couloir slideshow'),
+    'description' => t('Edit slideshow settings'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('couloir_slideshow_admin'),
+    'access arguments' => array('configure slideshow'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+?>

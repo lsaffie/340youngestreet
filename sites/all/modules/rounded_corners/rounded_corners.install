@@ -1,0 +1,5 @@
+<?php
+/* $Id: rounded_corners.install,v 1.1 2007/03/31 10:54:58 forngren Exp $ */
+  function rounded_corners_uninstall() {
+    variable_del('rounded_corners_all_pages');
+  }

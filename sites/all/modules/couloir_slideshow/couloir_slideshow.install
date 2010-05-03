@@ -1,0 +1,13 @@
+<?php
+// $Id: couloir_slideshow.install,v 1.2.2.3 2008/08/27 00:32:51 computerwolf Exp $
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function couloir_slideshow_uninstall() {
+  foreach (node_get_types('names') as $typename => $visiblename) {
+    if (variable_get('couloir_slideshow_'. $typename, 0)) {
+      variable_del('couloir_slideshow_'. $typename);
+    }
+  }
+}

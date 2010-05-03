@@ -1,0 +1,99 @@
+*  {	
+	padding: 0;
+	margin: 0;
+}
+
+#OuterContainer {
+	position:relative;
+	height: 200px;
+	width: 200px;
+	padding:0;
+	margin: 0 auto;
+	background-color: #6E6E6E;
+	text-align: left; /* to realign your text */
+}
+#PhotoContainer {
+	position: absolute;
+	height: 196px;
+	width: 196px;
+	top:2px;
+	left:2px;
+	font-size: 0px;
+	background-color: #333333;
+	background-image:url(../img/loading.gif);
+	background-position: center;
+	background-repeat:no-repeat;
+} 
+
+#Photo {
+	position: absolute;
+	top: 0;
+	left: 0;;
+	z-index: 5;
+}
+
+#Loading {
+	position: absolute;
+	top: 35%;
+	left: 0%;
+	height: 25%;
+	width: 100%;
+	text-align: center;
+	line-height: 0;
+}
+
+#LinkContainer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 10;
+	filter:alpha(opacity:80); /* Specify opacity for IE */
+}
+
+#PrevLink, #NextLink, #ViewPhoto {
+	cursor: pointer;
+	width: 33%;
+	height: 100%;
+	background: transparent url(../img/c.gif) no-repeat; /* Trick IE into showing hover */
+	display: block;
+	float: left;
+}
+
+#PrevLink span, #NextLink span, #ViewPhoto span { display: none; }
+
+/* background image for IE */
+#PrevLink:hover, #PrevLink:visited:hover { background: url(../img/backward.gif) 20% 50% no-repeat; }
+#ViewPhoto:hover, #ViewPhoto:visited:hover { background: url(../img/lightbox.gif) 50% 50% no-repeat; }
+#NextLink:hover, #NextLink:visited:hover { background: url(../img/forward.gif) 80% 50% no-repeat; }
+
+/* backgroudn image for compliant browsers */
+#LinkContainer>#PrevLink:hover, #LinkContainer>#PrevLink:visited:hover { background: url(../img/prev_chevron.png) 20% 50% no-repeat; }
+#LinkContainer>#ViewPhoto:hover, #LinkContainer>#ViewPhoto:visited:hover { background: url(../img/lightbox.png) 50% 50% no-repeat; }
+#LinkContainer>#NextLink:hover, #LinkContainer>#NextLink:visited:hover { background: url(../img/next_chevron.png) 80% 50% no-repeat; } 
+
+#CaptionContainer {
+	margin:0px;
+	margin-left:auto;
+	margin-right:auto;
+	width: 200px;
+	text-align: left;
+	background-color: #333333;
+	margin-top:5px;
+	}
+
+#CaptionContainer p {
+	padding-top: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom:5px;
+	font-size: 11px;
+	color: #919191;
+}
+
+#Counter {
+	font-weight: bold;
+	color: #BABABA;
+	padding-right: 5px;
+}
