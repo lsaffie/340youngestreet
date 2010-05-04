@@ -30,6 +30,9 @@ h1.site-name {
 .site-name a:visited {
   color: #111111;
 }
+#main .title{
+  padding-top: 5px;
+}
 .block {
   border: none;
   margin-bottom: 0;
