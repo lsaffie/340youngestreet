@@ -182,6 +182,11 @@ h1.site-name {
 #search label {
   display: none;
 }
+.title {
+  font: 16px Arial;
+  font-weight: bold;
+  color: #00508D;
+}
 #content {
   clear: both;
 }
