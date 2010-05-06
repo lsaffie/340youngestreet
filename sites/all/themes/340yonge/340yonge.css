@@ -11,6 +11,7 @@ tbody {
 }
 #header{
   background: #FFFFFF;
+  margin-bottom: 10px;
 }
 h1.site-name {
   padding-left: 10px;
@@ -183,7 +184,12 @@ h1.site-name {
   float: left;
 }
 #search label {
-  display: none;
+  font: 12px Arial;
+  font-weight: normal;
+}
+#search .form-text {
+  width: 9.5em;
+  height: 1.1em;
 }
 .title {
   font: 16px Arial;
@@ -221,4 +227,15 @@ h1.site-name {
   height: auto;
   padding: 0;
   margin: 1px;
+}
+#search-theme-form {
+  border: 1px solid #4573A8;
+  border-top: none;
+  float: right;
+}
+#search {
+  padding: 10px;
+}
+#menu {
+  padding-top: 0;
 }
