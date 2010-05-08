@@ -3,7 +3,7 @@ body {
 }
 #external_container {
   margin: 0 auto;
-  width: 1040px;
+  width: 1010px;
   text-align: left;
 }
 tbody {
@@ -34,10 +34,16 @@ h1.site-name {
 #main .title{
   padding-top: 5px;
 }
+#main {
+  padding-top: 0;
+}
 .block {
   border: none;
   margin-bottom: 0;
   padding-bottom: 0;
+}
+.block ul {
+  padding: 0;
 }
 #block-menu-menu-main-menu {
   border: none;
@@ -80,25 +86,32 @@ h1.site-name {
 }
 #sidebar-left {
   background: #FFFFFF;
+  padding: 0;
 }
 #sidebar-left li{
   border-bottom: none;
 }
 #sidebar-right {
   background: #FFFFFF;
+  padding: 0;
 }
 #sidebar-right li{
   border-bottom: none;
 }
 #block-views-animation-block_1 {
   clear: both;
-  padding: 10px;
+  margin-bottom: 10px;
+  padding-top: 10px;
+  width:  1010px;
 }
 .view-map {
   border: 1px solid #BBBBBB;
   height: 134px;
   width: 200px;
   text-align: center;
+}
+.view-map p {
+  margin: 7px 0;
 }
 .view-map ul {
   margin: 10px;
@@ -121,6 +134,9 @@ h1.site-name {
   width: 200px;
   text-align: center;
 }
+.view-neighbourhood-facts p {
+  margin: 7px 0;
+}
 .view-neighbourhood-facts ul {
   margin: 10px;
 }
@@ -141,6 +157,9 @@ h1.site-name {
   border: 1px solid #BBBBBB;
   height: 134px;
   width: 200px;
+}
+.view-links p {
+  margin: 7px 0;
 }
 .view-links ul {
   margin: 10px;
@@ -164,6 +183,9 @@ h1.site-name {
   width: 200px;
   text-align: left;
 }
+.view-blog p {
+  margin: 7px 0;
+}
 .view-blog ul {
   margin: 10px;
 }
@@ -183,13 +205,23 @@ h1.site-name {
 .field-item {
   float: left;
 }
+#search {
+  padding: 10px;
+}
 #search label {
   font: 12px Arial;
   font-weight: normal;
 }
 #search .form-text {
+  border: 1px solid;
+  border-right: none;
   width: 9.5em;
-  height: 1.1em;
+  font-size: 12px;
+  padding: 0;
+}
+#search .form-submit {
+  border: none;
+  float: right;
 }
 .title {
   font: 16px Arial;
@@ -214,12 +246,11 @@ h1.site-name {
   display: none;
 }
 #block-views-animation-block_1 .jcarousel-container-horizontal {
-  width: 950px;
   background: #FFFFFF;
   border: none;
+  padding: 0;
 }
 #block-views-animation-block_1 .jcarousel-clip-horizontal {
-  width: 950px;
   height: auto;
 }
 #block-views-animation-block_1 .jcarousel-item {
@@ -233,9 +264,6 @@ h1.site-name {
   border-top: none;
   float: right;
 }
-#search {
-  padding: 10px;
-}
 #menu {
-  padding-top: 0;
+  padding: 0;
 }
