@@ -1,6 +1,11 @@
 body {
   text-align: center
 }
+p {
+  font: 14px Arial;
+  line-height: 17px;
+  color: #58585A;
+}
 #external_container {
   margin: 0 auto;
   width: 1010px;
@@ -104,11 +109,16 @@ h1.site-name {
   padding-top: 10px;
   width:  1010px;
 }
+.views-field-body {
+  padding: 0 10px;
+}
 .view-map {
   border: 1px solid #BBBBBB;
   height: 134px;
   width: 200px;
   text-align: center;
+  font: 12px Arial;
+  margin-bottom: 10px;
 }
 .view-map p {
   margin: 7px 0;
@@ -133,8 +143,12 @@ h1.site-name {
   height: 134px;
   width: 200px;
   text-align: center;
+  font: 13px Arial;
+  color: #58585A;
 }
-.view-neighbourhood-facts p {
+.view-neighbourhood-facts .field-content p {
+  font: 13px Arial;
+  color: #58585A;
   margin: 7px 0;
 }
 .view-neighbourhood-facts ul {
@@ -158,6 +172,16 @@ h1.site-name {
   height: 134px;
   width: 200px;
 }
+.view-links a{
+  font: 13px Arial;
+  color: #58585a;
+}
+.view-links .field-content p{
+  font: 13px Arial;
+  color: #58585a;
+}
+
+
 .view-links p {
   margin: 7px 0;
 }
@@ -171,7 +195,7 @@ h1.site-name {
   padding: 1px;
   text-align: center;
 }
-.view-links .view-header a{
+.view-header a{
   color: #FFFFFF;
   font: 14px Arial;
   font-weight: 500;
@@ -182,8 +206,15 @@ h1.site-name {
   height: 134px;
   width: 200px;
   text-align: left;
+  margin-bottom: 10px;
 }
-.view-blog p {
+.view-blog a {
+  font: 13px Arial;
+  color: #58585A;
+}
+.view-blog .field-content p {
+  font: 13px Arial;
+  color: #58585a;
   margin: 7px 0;
 }
 .view-blog ul {
@@ -223,9 +254,13 @@ h1.site-name {
   border: none;
   float: right;
 }
-.title {
+#home-page-content .title {
   font: 16px Arial;
   font-weight: bold;
+  color: #00508D;
+}
+.title {
+  font: bold 14px Arial;
   color: #00508D;
 }
 #content {
@@ -236,6 +271,11 @@ h1.site-name {
 }
 .content a:hover img.left-floated {
   border: 1px solid red;
+}
+#home-page-content .content p {
+  font: 16px Arial;
+  line-height: 17px;
+  color: #58585A;
 }
 .content p {
   font: 14px Arial;

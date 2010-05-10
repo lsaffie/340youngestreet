@@ -45,7 +45,9 @@
           <div class="tabs"><?php print $tabs ?></div>
           <?php if ($show_messages) { print $messages; } ?>
           <?php print $help ?>
-          <?php print $content; ?>
+          <div id="home-page-content">
+            <?php print $content; ?>
+          </div>
           <?php print $feed_icons; ?>
         </div>
       </td>
