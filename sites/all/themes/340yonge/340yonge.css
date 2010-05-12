@@ -40,7 +40,7 @@ h1.site-name {
   padding-top: 5px;
 }
 #main {
-  padding-top: 0;
+  padding: 0 15px;
 }
 .block {
   border: none;
@@ -57,7 +57,7 @@ h1.site-name {
 #block-menu-menu-main-menu ul{
   background: #4573A8;
   padding: 7px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 #block-menu-menu-main-menu .title {
   display: none;
